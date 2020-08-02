@@ -207,3 +207,24 @@ ylabel('state')
 title('Multi Class Markov Chain Modelling');
 %%
 %Estimation of transition probability matrix.
+
+% detection configurations
+
+config.DETECTION_IMG_MIN_NUM_PIX = 240^2;  
+% if the number of pixels in a detection image is DETECTION_IMG_SIDE^2, 
+% scales up the image to meet that threshold
+config.DETECTION_IMG_MAX_NUM_PIX = 640^2;  
+config.PYRAMID_SCALE_RATIO = 2;
+
+%%% Predict the locations and scores of all objects
+%%% in the frame (bounds_predictions), of all poselet hits (poselet_hits)
+   [bounds_predictions,poselet_hits,torso_predictions] = Poselets_Prediction(img);
+
+% take top scoring torso only:
+torso = rect2box(torso_predictions.bounds(:,1)');
+
+%% crop to canonical aspect ratio
+    cropbox = tbox2ubbox(torso);
+    imgc = uint8(subarray(img,cropbox));
+    
+%%
